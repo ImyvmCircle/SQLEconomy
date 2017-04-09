@@ -7,16 +7,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
+import io.github.andrewward2001.sqlecon.util.Account;
 import org.bukkit.OfflinePlayer;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
+
+import static io.github.andrewward2001.sqlecon.SQLEconomy.S;
 
 public class SQLEconomyActions {
 
 	private static Connection c = SQLEconomy.c;
 	private static String table = SQLEconomy.getTable();
 	
-	private static double taxRate = SQLEconomy.S.taxRate;
+	private static double taxRate = S.taxRate;
+
+	private static boolean caching = SQLEconomy.caching;
 
 	public synchronized static boolean playerDataContainsPlayer(UUID uid) {
 		try {
@@ -72,90 +77,117 @@ public class SQLEconomyActions {
 	}
 
 	public static boolean giveMoney(UUID uid, int amount, boolean tax) {
-		if(amount > 0)
-			if(tax)
-				amount -= amount*taxRate;
-			try {
-				PreparedStatement giveMoney = c
-						.prepareStatement("UPDATE `" + table + "` SET money = money + ? WHERE player_uuid=?;");
-				giveMoney.setInt(1, amount);
-				giveMoney.setString(2, uid.toString());
-				giveMoney.executeUpdate();
-	
-				giveMoney.close();
-	
-				return true;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if(amount > 0) {
+            if (tax)
+                amount -= amount * taxRate;
+            if (caching) {
+                int accountPos = S.getCache().getAccountIndex(uid);
+                S.getCache().stored.get(accountPos).bal += amount;
+            } else
+                try {
+                    PreparedStatement giveMoney = c
+                            .prepareStatement("UPDATE `" + table + "` SET money = money + ? WHERE player_uuid=?;");
+                    giveMoney.setInt(1, amount);
+                    giveMoney.setString(2, uid.toString());
+                    giveMoney.executeUpdate();
+
+                    giveMoney.close();
+
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
 
 		return false;
 	}
 
 	public static boolean giveMoney(String name, int amount, boolean tax) {
-		if(amount > 0)
-			if(tax)
-				amount -= amount*taxRate;
-			try {
-				PreparedStatement giveMoney = c
-						.prepareStatement("UPDATE `" + table + "` SET money = money + ? WHERE player=?;");
-				giveMoney.setInt(1, amount);
-				giveMoney.setString(2, name);
-				giveMoney.executeUpdate();
-	
-				giveMoney.close();
-	
-				return true;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if(amount > 0) {
+            if (tax)
+                amount -= amount * taxRate;
+            if (caching) {
+                int accountPos = S.getCache().getAccountIndex(name);
+                S.getCache().stored.get(accountPos).bal += amount;
+            } else
+                try {
+                    PreparedStatement giveMoney = c
+                            .prepareStatement("UPDATE `" + table + "` SET money = money + ? WHERE player=?;");
+                    giveMoney.setInt(1, amount);
+                    giveMoney.setString(2, name);
+                    giveMoney.executeUpdate();
+
+                    giveMoney.close();
+
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+        }
 
 		return false;
 	}
 
 	public static boolean removeMoney(UUID uid, int amount, boolean tax) {
-		if(amount > 0)
-			if(tax)
-				amount += amount*taxRate;
-			try {
-				PreparedStatement removeMoney = c
-						.prepareStatement("UPDATE `" + table + "` SET money = money - ? WHERE player_uuid=?;");
-				removeMoney.setInt(1, amount);
-				removeMoney.setString(2, uid.toString());
-				removeMoney.executeUpdate();
-	
-				removeMoney.close();
-	
-				return true;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if(amount > 0) {
+            if (tax)
+                amount += amount * taxRate;
+            if (caching) {
+                int accountPos = S.getCache().getAccountIndex(uid);
+                S.getCache().stored.get(accountPos).bal -= amount;
+            } else
+                try {
+                    PreparedStatement removeMoney = c
+                            .prepareStatement("UPDATE `" + table + "` SET money = money - ? WHERE player_uuid=?;");
+                    removeMoney.setInt(1, amount);
+                    removeMoney.setString(2, uid.toString());
+                    removeMoney.executeUpdate();
+
+                    removeMoney.close();
+
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+        }
 
 		return false;
 	}
 
 	public static boolean removeMoney(String name, int amount, boolean tax) {
-		if(amount > 0)
-			if(tax)
-				amount += amount*taxRate;
-			try {
-				PreparedStatement getBal = c
-						.prepareStatement("UPDATE `" + table + "` SET money = money - ? WHERE player=?;");
-				getBal.setInt(1, amount);
-				getBal.setString(2, name);
-				getBal.executeUpdate();
-	
-				getBal.close();
-	
-				return true;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if(amount > 0) {
+            if (tax)
+                amount += amount * taxRate;
+            if (caching) {
+                int accountPos = S.getCache().getAccountIndex(name);
+                S.getCache().stored.get(accountPos).bal -= amount;
+            } else
+                try {
+                    PreparedStatement getBal = c
+                            .prepareStatement("UPDATE `" + table + "` SET money = money - ? WHERE player=?;");
+                    getBal.setInt(1, amount);
+                    getBal.setString(2, name);
+                    getBal.executeUpdate();
+
+                    getBal.close();
+
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
 
 		return false;
 	}
 
 	public static int getMoney(UUID uid) {
+
+        if (caching) {
+            int accountPos = S.getCache().getAccountIndex(uid);
+            return S.getCache().stored.get(accountPos).bal;
+        }
 
 		try {
 			Statement getMoney = c.createStatement();
@@ -182,6 +214,11 @@ public class SQLEconomyActions {
 	}
 
 	public static int getMoney(String name) {
+
+        if (caching) {
+            int accountPos = SQLEconomy.S.getCache().getAccountIndex(name);
+            return SQLEconomy.S.getCache().stored.get(accountPos).bal;
+        }
 
 		try {
 			PreparedStatement getMoney = c.prepareStatement("SELECT money FROM `" + table + "` WHERE player = ?;");
@@ -219,6 +256,8 @@ public class SQLEconomyActions {
 			econRegister.close();
 			
 			System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
+			if(caching)
+                S.getCache().stored.add(new Account(player.getName(), player.getUniqueId(), Integer.parseInt(S.getDefaultMoney())));
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}
@@ -238,6 +277,8 @@ public class SQLEconomyActions {
 			econRegister.close();
 			
 			System.out.println("[SQLEconomy] Added user " + name + " to the economy database.");
+			if(caching)
+                S.getCache().stored.add(new Account(name, UUID.randomUUID(), Integer.parseInt(S.getDefaultMoney())));
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}

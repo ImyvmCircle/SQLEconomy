@@ -2,6 +2,7 @@ package io.github.andrewward2001.sqlecon;
 
 import java.sql.SQLException;
 
+import io.github.andrewward2001.sqlecon.util.Cache;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -16,7 +17,9 @@ import io.github.andrewward2001.sqlecon.hooks.Dependency;
 import io.github.andrewward2001.sqlecon.mysql.*;
 import net.milkbowl.vault.economy.Economy;
 
+import java.util.Timer;
 import java.sql.Connection;
+import java.util.TimerTask;
 
 public class SQLEconomy extends JavaPlugin implements Listener {
 
@@ -35,7 +38,12 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 
 	public static String moneyUnit;
 	
-	public static double taxRate; 
+	public static double taxRate;
+
+	public static boolean caching;
+	private int cacheRate;
+	private static Cache cache;
+	private static Timer updateCache;
 
 	private static MySQL MySQL;
 	static Connection c;
@@ -60,6 +68,9 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 		
 		taxRate = getConfig().getInt("TaxRate")/100.0;
 
+		caching = getConfig().getBoolean("DatabaseCaching");
+		cacheRate = getConfig().getInt("DatabaseCacheRate");
+
 		MySQL = new MySQL(host, port, database, user, pass);
 		try {
 			c = MySQL.openConnection();
@@ -70,6 +81,18 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 		}
 
 		SQLEconomyActions.createTable();
+
+		if(caching) {
+            cache = new Cache(c, table);
+            cache.createCache();
+            updateCache = new Timer();
+            updateCache.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    cache.updateCache();
+                }
+            }, cacheRate, cacheRate);
+        }
 
 		this.getCommand("money").setExecutor(new Money(this));
 		this.getCommand("m").setExecutor(new Money(this));
@@ -90,13 +113,17 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 	public static SQLEconomyAPI getAPI() {
 		return new SQLEconomyAPI();
 	}
+
+	public static Cache getCache() {
+	    return cache;
+	}
 	
 	// Vault hook based on implementation found at https://github.com/MinecraftWars/Gringotts
 	private void registerEconomy() {
         if (Dependency.DEP.vault.exists()) {
             final ServicesManager sm = getServer().getServicesManager();
             sm.register(Economy.class, new VaultConnector(), this, ServicePriority.Highest);
-            getLogger().info("[SQLEconomy] Registered Vault interface.");
+            getLogger().info("Registered Vault interface.");
         } else {
         	getLogger().info("[SQLEconomy] Vault not found. Other plugins may not be able to access SQLEconomy accounts.");
         }

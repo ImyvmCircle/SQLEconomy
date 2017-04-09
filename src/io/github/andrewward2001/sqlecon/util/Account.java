@@ -1,0 +1,16 @@
+package io.github.andrewward2001.sqlecon.util;
+
+import java.util.UUID;
+
+public class Account extends Object {
+
+    public String name;
+    public UUID uid;
+    public int bal;
+
+    public Account(String name, UUID uid, int bal) {
+        this.name = name;
+        this.uid = uid;
+        this.bal = bal;
+    }
+}

@@ -19,6 +19,10 @@ DatabaseTable: economy
 DatabaseUsername: root
 # A password is REQUIRED.
 DatabasePassword: pass
+# Will cache the entire database in an ArrayList.
+DatabaseCaching: true
+# How often (in ms) the database will be updated (60s default). Keep in mind that this can take a while on larger databases.
+DatabaseCacheRate: 60000
 
 # Set the default money your players will have. MUST BE A WHOLE NUMBER
 DefaultMoney: 1000
