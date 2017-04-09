@@ -2,7 +2,7 @@ package io.github.andrewward2001.sqlecon.util;
 
 import java.util.UUID;
 
-public class Account extends Object {
+public class Account {
 
     public String name;
     public UUID uid;

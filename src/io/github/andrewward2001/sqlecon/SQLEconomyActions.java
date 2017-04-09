@@ -11,6 +11,7 @@ import io.github.andrewward2001.sqlecon.util.Account;
 import org.bukkit.OfflinePlayer;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
+import org.bukkit.command.CommandException;
 
 import static io.github.andrewward2001.sqlecon.SQLEconomy.S;
 
@@ -81,8 +82,13 @@ public class SQLEconomyActions {
             if (tax)
                 amount -= amount * taxRate;
             if (caching) {
-                int accountPos = S.getCache().getAccountIndex(uid);
-                S.getCache().stored.get(accountPos).bal += amount;
+                try {
+                    int accountPos = S.getCache().getAccountIndex(uid);
+                    S.getCache().stored.get(accountPos).bal += amount;
+                } catch (CommandException e) {
+                    System.out.println("[SQLEconomy] Error: Couldn't find user");
+                    return false;
+                }
             } else
                 try {
                     PreparedStatement giveMoney = c
@@ -107,8 +113,13 @@ public class SQLEconomyActions {
             if (tax)
                 amount -= amount * taxRate;
             if (caching) {
-                int accountPos = S.getCache().getAccountIndex(name);
-                S.getCache().stored.get(accountPos).bal += amount;
+                try {
+                    int accountPos = S.getCache().getAccountIndex(name);
+                    S.getCache().stored.get(accountPos).bal += amount;
+                } catch (CommandException e) {
+                    System.out.println("[SQLEconomy] Error: Couldn't find user");
+                    return false;
+                }
             } else
                 try {
                     PreparedStatement giveMoney = c
@@ -134,8 +145,13 @@ public class SQLEconomyActions {
             if (tax)
                 amount += amount * taxRate;
             if (caching) {
-                int accountPos = S.getCache().getAccountIndex(uid);
-                S.getCache().stored.get(accountPos).bal -= amount;
+                try {
+                    int accountPos = S.getCache().getAccountIndex(uid);
+                    S.getCache().stored.get(accountPos).bal -= amount;
+                } catch (CommandException e) {
+                    System.out.println("[SQLEconomy] Error: Couldn't find user");
+                    return false;
+                }
             } else
                 try {
                     PreparedStatement removeMoney = c
@@ -161,8 +177,13 @@ public class SQLEconomyActions {
             if (tax)
                 amount += amount * taxRate;
             if (caching) {
-                int accountPos = S.getCache().getAccountIndex(name);
-                S.getCache().stored.get(accountPos).bal -= amount;
+                try {
+                    int accountPos = S.getCache().getAccountIndex(name);
+                    S.getCache().stored.get(accountPos).bal -= amount;
+                } catch (CommandException e) {
+                    System.out.println("[SQLEconomy] Error: Couldn't find user");
+                    return false;
+                }
             } else
                 try {
                     PreparedStatement getBal = c
@@ -185,8 +206,13 @@ public class SQLEconomyActions {
 	public static int getMoney(UUID uid) {
 
         if (caching) {
-            int accountPos = S.getCache().getAccountIndex(uid);
-            return S.getCache().stored.get(accountPos).bal;
+            try {
+                int accountPos = S.getCache().getAccountIndex(uid);
+                return S.getCache().stored.get(accountPos).bal;
+            } catch (CommandException e) {
+                System.out.println("[SQLEconomy] Error: Couldn't find user");
+                return -1;
+            }
         }
 
 		try {
@@ -216,8 +242,13 @@ public class SQLEconomyActions {
 	public static int getMoney(String name) {
 
         if (caching) {
-            int accountPos = SQLEconomy.S.getCache().getAccountIndex(name);
-            return SQLEconomy.S.getCache().stored.get(accountPos).bal;
+            try {
+                int accountPos = SQLEconomy.S.getCache().getAccountIndex(name);
+                return SQLEconomy.S.getCache().stored.get(accountPos).bal;
+            } catch (CommandException e) {
+                System.out.println("[SQLEconomy] Error: Couldn't find user");
+                return -1;
+            }
         }
 
 		try {
@@ -288,29 +319,18 @@ public class SQLEconomyActions {
 	
 	public static boolean hasEnough(UUID uid, int amount) {
 		int bal = getMoney(uid);
-		
-		if(bal >= (int) amount) {
-			return true;
-		}
-		
-		return false;
+
+		return bal >= (int) amount;
 	}
 	
 	public static boolean hasEnough(String name, int amount) {
 		int bal = getMoney(name);
-		
-		if(bal >= (int) amount) {
-			return true;
-		}
-		
-		return false;
+
+        return bal >= (int) amount;
 	}
 	
 	public static boolean transferMoney(String name, UUID uid, int amount) {
-		if(giveMoney(name, amount, false) && removeMoney(uid, amount, false) && hasEnough(uid, amount))
-			return true;
-		
-		return false;
+		return hasEnough(uid, amount) && giveMoney(name, amount, false) && removeMoney(uid, amount, false);
 	}
 
 }
