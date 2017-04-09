@@ -25,8 +25,6 @@ public class SQLEconomyActions {
 	private static boolean caching = SQLEconomy.caching;
 
 	public synchronized static boolean playerDataContainsPlayer(UUID uid) {
-	    if(caching)
-	        return S.getCache().getAccountIndex(uid) > -1;
 		try {
 			Statement sql = c.createStatement();
 			ResultSet resultSet = sql.executeQuery(
@@ -44,8 +42,6 @@ public class SQLEconomyActions {
 	}
 	
 	public synchronized static boolean playerDataContainsPlayer(String player) {
-        if(caching)
-            return S.getCache().getAccountIndex(player) > -1;
 		try {
 			Statement sql = c.createStatement();
 			ResultSet resultSet = sql.executeQuery(
@@ -286,13 +282,13 @@ public class SQLEconomyActions {
 			econRegister.setString(1, player.getName());
 			econRegister.setString(2, player.getUniqueId().toString());
 			econRegister.setString(3, SQLEconomy.getDefaultMoney());
-			econRegister.setInt(4, 1);
+			econRegister.setLong(4, 1);
 			econRegister.executeUpdate();
 			econRegister.close();
 			
 			System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
 			if(caching)
-                S.getCache().updateCache();
+                S.getCache().stored.add(new Account(player.getName(), player.getUniqueId(), Integer.parseInt(S.getDefaultMoney())));
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}
@@ -307,13 +303,13 @@ public class SQLEconomyActions {
 			econRegister.setString(1, name);
 			econRegister.setString(2, UUID.randomUUID().toString());
 			econRegister.setString(3, SQLEconomy.getDefaultMoney());
-			econRegister.setInt(4, 1);
+			econRegister.setLong(4, 1);
 			econRegister.executeUpdate();
 			econRegister.close();
 			
 			System.out.println("[SQLEconomy] Added user " + name + " to the economy database.");
 			if(caching)
-                S.getCache().updateCache();
+                S.getCache().stored.add(new Account(name, UUID.randomUUID(), Integer.parseInt(S.getDefaultMoney())));
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}
@@ -324,13 +320,13 @@ public class SQLEconomyActions {
 	public static boolean hasEnough(UUID uid, int amount) {
 		int bal = getMoney(uid);
 
-		return bal >= amount;
+		return bal >= (int) amount;
 	}
 	
 	public static boolean hasEnough(String name, int amount) {
 		int bal = getMoney(name);
 
-        return bal >= amount;
+        return bal >= (int) amount;
 	}
 	
 	public static boolean transferMoney(String name, UUID uid, int amount) {
