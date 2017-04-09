@@ -288,7 +288,7 @@ public class SQLEconomyActions {
 			
 			System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
 			if(caching)
-                S.getCache().stored.add(new Account(player.getName(), player.getUniqueId(), Integer.parseInt(S.getDefaultMoney())));
+                S.getCache().createCache();
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}
@@ -309,7 +309,7 @@ public class SQLEconomyActions {
 			
 			System.out.println("[SQLEconomy] Added user " + name + " to the economy database.");
 			if(caching)
-                S.getCache().stored.add(new Account(name, UUID.randomUUID(), Integer.parseInt(S.getDefaultMoney())));
+                S.getCache().createCache();
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}

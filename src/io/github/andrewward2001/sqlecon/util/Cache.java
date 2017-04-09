@@ -51,6 +51,8 @@ public class Cache {
                 return false;
             }
         }
+        stored.clear();
+        createCache();
 
         System.out.println("[SQLEconomy] Updated database from cache.");
 
