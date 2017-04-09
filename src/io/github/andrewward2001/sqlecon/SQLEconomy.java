@@ -40,7 +40,7 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 	
 	public static double taxRate;
 
-	public static boolean caching;
+	public static boolean caching = false;
 	private int cacheRate;
 	private static Cache cache;
 	private static Timer updateCache;
@@ -49,6 +49,9 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 	static Connection c;
 
 	public void onDisable() {
+	    if(updateCache != null) {
+	        updateCache.cancel();
+        }
 	}
 
 	public void onEnable() {
