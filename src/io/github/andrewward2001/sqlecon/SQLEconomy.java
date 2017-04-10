@@ -3,7 +3,10 @@ package io.github.andrewward2001.sqlecon;
 import java.sql.SQLException;
 
 import io.github.andrewward2001.sqlecon.util.Cache;
+import io.github.andrewward2001.sqlecon.util.Configuration;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
@@ -35,15 +38,14 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 	private static String user;
 	private static String pass;
 	private static String defMoney;
+    public static boolean caching;
+    private int cacheRate;
+    private static Cache cache;
+    private static Timer updateCache;
 
 	public static String moneyUnit;
 	
 	public static double taxRate;
-
-	public static boolean caching;
-	private int cacheRate;
-	private static Cache cache;
-	private static Timer updateCache;
 
 	private static MySQL MySQL;
 	static Connection c;
@@ -52,24 +54,21 @@ public class SQLEconomy extends JavaPlugin implements Listener {
 	}
 
 	public void onEnable() {
-		this.saveDefaultConfig();
-		getConfig().options().copyDefaults(true);
-		this.saveConfig();
+        FileConfiguration conf = getConfig("config.yml");
+        FileConfiguration dbConf = getConfig("db.yml");
 
-		host = getConfig().getString("DatabaseHostIP");
-		port = getConfig().getString("DatabasePort");
-		database = getConfig().getString("DatabaseName");
-		table = getConfig().getString("DatabaseTable");
-		user = getConfig().getString("DatabaseUsername");
-		pass = getConfig().getString("DatabasePassword");
-		defMoney = getConfig().getString("DefaultMoney");
+		host = dbConf.getString("HostIP");
+		port = dbConf.getString("Port");
+		database = dbConf.getString("Name");
+		table = dbConf.getString("Table");
+		user = dbConf.getString("Username");
+		pass = dbConf.getString("Password");
+        caching = dbConf.getBoolean("Caching");
+        cacheRate = dbConf.getInt("CacheRate");
 
-		moneyUnit = getConfig().getString("MoneyUnit");
-		
-		taxRate = getConfig().getInt("TaxRate")/100.0;
-
-		caching = getConfig().getBoolean("DatabaseCaching");
-		cacheRate = getConfig().getInt("DatabaseCacheRate");
+		defMoney = conf.getString("DefaultMoney");
+		moneyUnit = conf.getString("MoneyUnit");
+		taxRate = conf.getInt("TaxRate")/100.0;
 
 		MySQL = new MySQL(host, port, database, user, pass);
 		try {
@@ -127,6 +126,10 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         } else {
         	getLogger().info("[SQLEconomy] Vault not found. Other plugins may not be able to access SQLEconomy accounts.");
         }
+    }
+
+    public FileConfiguration getConfig(String name) {
+        return YamlConfiguration.loadConfiguration(Configuration.loadResource(this, name));
     }
 
 	public boolean isInteger(String str) {

@@ -1,28 +1,8 @@
 ######################################
 #                                    #
-#     SQLEconomy v1, Build: Heyo     #
+#      SQLEconomy Configuration      #
 #                                    #
 ######################################
-# MySQL and SQLite only!
-#
-# Enter your database host ip below. May be a URL!
-# If you have WAMP or XAMPP server this is already installed, just use 'localhost'
-DatabaseHostIP: localhost
-# Enter your SQL port below. If you are unsure, leave as-is. If your
-# SQL is NOT a default install, you MIGHT NEED TO change this.
-DatabasePort: 3306
-# What your database is called. This MUST HAVE ALREADY BEEN CREATED.
-DatabaseName: economy
-# What your table name is. DO NOT CREATE IT YOURSELF.
-DatabaseTable: economy
-# The username to access your database. This might be root if you're using a localhost.
-DatabaseUsername: root
-# A password is REQUIRED.
-DatabasePassword: pass
-# Will cache the entire database in an ArrayList.
-DatabaseCaching: true
-# How often (in ms) the database will be updated (60s default). Keep in mind that this can take a while on larger databases.
-DatabaseCacheRate: 60000
 
 # Set the default money your players will have. MUST BE A WHOLE NUMBER
 DefaultMoney: 1000

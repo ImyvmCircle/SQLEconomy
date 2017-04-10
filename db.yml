@@ -1,0 +1,24 @@
+######################################
+#                                    #
+#     SQLEconomy DB Configuration    #
+#                                    #
+######################################
+# MySQL and SQLite only!
+#
+# Enter your database host IP/URL below.
+HostIP: localhost
+# Enter your SQL port below. If you are unsure, leave as-is. If your
+# SQL is NOT a default install, you MIGHT NEED TO change this.
+Port: 3306
+# What your database is called. This MUST HAVE ALREADY BEEN CREATED.
+Name: economy
+# What your table name is. DO NOT CREATE IT YOURSELF.
+Table: economy
+# The username to access your database. This might be root if you're using a localhost.
+Username: root
+# A password is REQUIRED.
+Password: pass
+# Will cache the entire database in an ArrayList. It's pretty buggy and won't always work (breaks Towny, for example)
+Caching: false
+# How often (in ms) the database will be updated (60s default). Keep in mind that this can take a while on larger databases.
+CacheRate: 60000

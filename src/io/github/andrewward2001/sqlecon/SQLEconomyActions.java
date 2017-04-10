@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
-import io.github.andrewward2001.sqlecon.util.Account;
 import org.bukkit.OfflinePlayer;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
@@ -288,7 +287,9 @@ public class SQLEconomyActions {
 			
 			System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
 			if(caching)
-                S.getCache().createCache();
+                S.getCache().updateCache();
+
+			return true;
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}
@@ -309,7 +310,9 @@ public class SQLEconomyActions {
 			
 			System.out.println("[SQLEconomy] Added user " + name + " to the economy database.");
 			if(caching)
-                S.getCache().createCache();
+                S.getCache().updateCache();
+
+			return true;
 		} catch (SQLException e) {
 			System.out.println("[SQLEconomy] Error creating user!");
 		}
