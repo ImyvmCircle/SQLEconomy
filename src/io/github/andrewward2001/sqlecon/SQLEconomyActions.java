@@ -16,68 +16,68 @@ import static io.github.andrewward2001.sqlecon.SQLEconomy.S;
 
 public class SQLEconomyActions {
 
-	private static Connection c = SQLEconomy.c;
-	private static String table = SQLEconomy.getTable();
-	
-	private static double taxRate = S.taxRate;
+    private static Connection c = SQLEconomy.c;
+    private static String table = SQLEconomy.getTable();
 
-	private static boolean caching = SQLEconomy.caching;
+    private static double taxRate = S.taxRate;
 
-	public synchronized static boolean playerDataContainsPlayer(UUID uid) {
-		try {
-			Statement sql = c.createStatement();
-			ResultSet resultSet = sql.executeQuery(
-					"SELECT * FROM `" + table + "` WHERE `player_uuid` = '" + uid + "';");
-			boolean containsPlayer = resultSet.next();
+    private static boolean caching = SQLEconomy.caching;
 
-			sql.close();
-			resultSet.close();
+    public synchronized static boolean playerDataContainsPlayer(UUID uid) {
+        try {
+            Statement sql = c.createStatement();
+            ResultSet resultSet = sql.executeQuery(
+                    "SELECT * FROM `" + table + "` WHERE `player_uuid` = '" + uid + "';");
+            boolean containsPlayer = resultSet.next();
 
-			return containsPlayer;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	public synchronized static boolean playerDataContainsPlayer(String player) {
-		try {
-			Statement sql = c.createStatement();
-			ResultSet resultSet = sql.executeQuery(
-					"SELECT * FROM `" + table + "` WHERE `player` = '" + player + "';");
-			boolean containsPlayer = resultSet.next();
+            sql.close();
+            resultSet.close();
 
-			sql.close();
-			resultSet.close();
+            return containsPlayer;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-			return containsPlayer;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+    public synchronized static boolean playerDataContainsPlayer(String player) {
+        try {
+            Statement sql = c.createStatement();
+            ResultSet resultSet = sql.executeQuery(
+                    "SELECT * FROM `" + table + "` WHERE `player` = '" + player + "';");
+            boolean containsPlayer = resultSet.next();
 
-	public static void createTable() {
-		try {
-			Statement tableCreate = c.createStatement();
-			tableCreate.execute("CREATE TABLE IF NOT EXISTS `" + table
-					+ "` (`player_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, `player` varchar(255) NOT NULL, `player_uuid` varchar(255) NOT NULL, `money` int(20) NOT NULL, `active` int(1) NOT NULL DEFAULT '1') ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+            sql.close();
+            resultSet.close();
 
-			System.out.println("[SQLEconomy] Created/checked the database table");
-			tableCreate.close();
-		} catch (MySQLSyntaxErrorException e) {
-			e.printStackTrace();
-			System.out.println(
-					"[SQLEconomy] There was a snag initializing the database. Please send the ENTIRE stack trace above.");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println(
-					"[SQLEconomy] There was a snag initializing the database. Make sure you set up the config!");
-		}
-	}
+            return containsPlayer;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-	public static boolean giveMoney(UUID uid, int amount, boolean tax) {
-		if(amount > 0) {
+    public static void createTable() {
+        try {
+            Statement tableCreate = c.createStatement();
+            tableCreate.execute("CREATE TABLE IF NOT EXISTS `" + table
+                    + "` (`player_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, `player` varchar(255) NOT NULL, `player_uuid` varchar(255) NOT NULL, `money` int(20) NOT NULL, `active` int(1) NOT NULL DEFAULT '1') ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+
+            System.out.println("[SQLEconomy] Created/checked the database table");
+            tableCreate.close();
+        } catch (MySQLSyntaxErrorException e) {
+            e.printStackTrace();
+            System.out.println(
+                    "[SQLEconomy] There was a snag initializing the database. Please send the ENTIRE stack trace above.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(
+                    "[SQLEconomy] There was a snag initializing the database. Make sure you set up the config!");
+        }
+    }
+
+    public static boolean giveMoney(UUID uid, int amount, boolean tax) {
+        if(amount > 0) {
             if (tax)
                 amount -= amount * taxRate;
             if (caching) {
@@ -104,11 +104,11 @@ public class SQLEconomyActions {
                 }
         }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static boolean giveMoney(String name, int amount, boolean tax) {
-		if(amount > 0) {
+    public static boolean giveMoney(String name, int amount, boolean tax) {
+        if(amount > 0) {
             if (tax)
                 amount -= amount * taxRate;
             if (caching) {
@@ -136,11 +136,11 @@ public class SQLEconomyActions {
 
         }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static boolean removeMoney(UUID uid, int amount, boolean tax) {
-		if(amount > 0) {
+    public static boolean removeMoney(UUID uid, int amount, boolean tax) {
+        if(amount > 0) {
             if (tax)
                 amount += amount * taxRate;
             if (caching) {
@@ -168,11 +168,11 @@ public class SQLEconomyActions {
 
         }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static boolean removeMoney(String name, int amount, boolean tax) {
-		if(amount > 0) {
+    public static boolean removeMoney(String name, int amount, boolean tax) {
+        if(amount > 0) {
             if (tax)
                 amount += amount * taxRate;
             if (caching) {
@@ -199,10 +199,10 @@ public class SQLEconomyActions {
                 }
         }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static int getMoney(UUID uid) {
+    public static int getMoney(UUID uid) {
 
         if (caching) {
             try {
@@ -214,31 +214,31 @@ public class SQLEconomyActions {
             }
         }
 
-		try {
-			Statement getMoney = c.createStatement();
-			ResultSet res = getMoney
-					.executeQuery("SELECT money FROM `" + table + "` WHERE player_uuid = '" + uid.toString() + "';");
-			while(res.next()) {
-				int money = 0;
-				if (res.getString("money") != null)
-					money = res.getInt("money");
-	
-				getMoney.close();
-				res.close();
-	
-				return money;
-			}
-			
-			return -1;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+        try {
+            Statement getMoney = c.createStatement();
+            ResultSet res = getMoney
+                    .executeQuery("SELECT money FROM `" + table + "` WHERE player_uuid = '" + uid.toString() + "';");
+            while(res.next()) {
+                int money = 0;
+                if (res.getString("money") != null)
+                    money = res.getInt("money");
 
-		return 0;
+                getMoney.close();
+                res.close();
 
-	}
+                return money;
+            }
 
-	public static int getMoney(String name) {
+            return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+
+    }
+
+    public static int getMoney(String name) {
 
         if (caching) {
             try {
@@ -250,90 +250,90 @@ public class SQLEconomyActions {
             }
         }
 
-		try {
-			PreparedStatement getMoney = c.prepareStatement("SELECT money FROM `" + table + "` WHERE player = ?;");
-			getMoney.setString(1, name);
-			ResultSet res = getMoney.executeQuery();
-			while(res.next()) {
-				int money = 0;
-				if (res.getString("money") != null)
-					money = res.getInt("money");
-	
-				getMoney.close();
-				res.close();
-	
-				return money;
-			}
-			
-			return -1;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+        try {
+            PreparedStatement getMoney = c.prepareStatement("SELECT money FROM `" + table + "` WHERE player = ?;");
+            getMoney.setString(1, name);
+            ResultSet res = getMoney.executeQuery();
+            while(res.next()) {
+                int money = 0;
+                if (res.getString("money") != null)
+                    money = res.getInt("money");
 
-		return 0;
+                getMoney.close();
+                res.close();
 
-	}
-	
-	public static boolean createAccount(OfflinePlayer player) {
-		try {
-			PreparedStatement econRegister = c.prepareStatement(
-					"INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
-			econRegister.setString(1, player.getName());
-			econRegister.setString(2, player.getUniqueId().toString());
-			econRegister.setString(3, SQLEconomy.getDefaultMoney());
-			econRegister.setLong(4, 1);
-			econRegister.executeUpdate();
-			econRegister.close();
-			
-			System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
-			if(caching)
+                return money;
+            }
+
+            return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+
+    }
+
+    public static boolean createAccount(OfflinePlayer player) {
+        try {
+            PreparedStatement econRegister = c.prepareStatement(
+                    "INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
+            econRegister.setString(1, player.getName());
+            econRegister.setString(2, player.getUniqueId().toString());
+            econRegister.setString(3, SQLEconomy.getDefaultMoney());
+            econRegister.setLong(4, 1);
+            econRegister.executeUpdate();
+            econRegister.close();
+
+            System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
+            if(caching)
                 S.getCache().updateCache();
 
-			return true;
-		} catch (SQLException e) {
-			System.out.println("[SQLEconomy] Error creating user!");
-		}
-		
-		return false;
-	}
-	
-	public static boolean createAccount(String name) {
-		try {
-			PreparedStatement econRegister = c.prepareStatement(
-					"INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
-			econRegister.setString(1, name);
-			econRegister.setString(2, UUID.randomUUID().toString());
-			econRegister.setString(3, SQLEconomy.getDefaultMoney());
-			econRegister.setLong(4, 1);
-			econRegister.executeUpdate();
-			econRegister.close();
-			
-			System.out.println("[SQLEconomy] Added user " + name + " to the economy database.");
-			if(caching)
+            return true;
+        } catch (SQLException e) {
+            System.out.println("[SQLEconomy] Error creating user!");
+        }
+
+        return false;
+    }
+
+    public static boolean createAccount(String name) {
+        try {
+            PreparedStatement econRegister = c.prepareStatement(
+                    "INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
+            econRegister.setString(1, name);
+            econRegister.setString(2, UUID.randomUUID().toString());
+            econRegister.setString(3, SQLEconomy.getDefaultMoney());
+            econRegister.setLong(4, 1);
+            econRegister.executeUpdate();
+            econRegister.close();
+
+            System.out.println("[SQLEconomy] Added user " + name + " to the economy database.");
+            if(caching)
                 S.getCache().updateCache();
 
-			return true;
-		} catch (SQLException e) {
-			System.out.println("[SQLEconomy] Error creating user!");
-		}
-		
-		return false;
-	}
-	
-	public static boolean hasEnough(UUID uid, int amount) {
-		int bal = getMoney(uid);
+            return true;
+        } catch (SQLException e) {
+            System.out.println("[SQLEconomy] Error creating user!");
+        }
 
-		return bal >= (int) amount;
-	}
-	
-	public static boolean hasEnough(String name, int amount) {
-		int bal = getMoney(name);
+        return false;
+    }
+
+    public static boolean hasEnough(UUID uid, int amount) {
+        int bal = getMoney(uid);
 
         return bal >= (int) amount;
-	}
-	
-	public static boolean transferMoney(String name, UUID uid, int amount) {
-		return hasEnough(uid, amount) && giveMoney(name, amount, false) && removeMoney(uid, amount, false);
-	}
+    }
+
+    public static boolean hasEnough(String name, int amount) {
+        int bal = getMoney(name);
+
+        return bal >= (int) amount;
+    }
+
+    public static boolean transferMoney(String name, UUID uid, int amount) {
+        return hasEnough(uid, amount) && giveMoney(name, amount, false) && removeMoney(uid, amount, false);
+    }
 
 }

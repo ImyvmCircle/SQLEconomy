@@ -12,46 +12,46 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 public class SQLEconomyListener implements Listener {
-	
-	private String table;
-	private String defMoney;
-	
-	private Connection c;
-	
-	public SQLEconomyListener(String table, String defMoney, Connection c) {
-		this.table = table;
-		this.defMoney = defMoney;
-		this.c = c;
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerLogin(PlayerLoginEvent event) {
-		Player player = event.getPlayer();
 
-		try {
-			if (!SQLEconomyActions.playerDataContainsPlayer(player.getUniqueId())) {
-				PreparedStatement econRegister = c.prepareStatement(
-						"INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
-				econRegister.setString(1, player.getName());
-				econRegister.setString(2, player.getUniqueId().toString());
-				econRegister.setString(3, defMoney);
-				econRegister.setLong(4, 1);
-				econRegister.executeUpdate();
-				econRegister.close();
-				
-				System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
-			} else {
-				// make sure the stored player name is kept current
+    private String table;
+    private String defMoney;
 
-				Statement statement = c.createStatement();
-				statement.executeUpdate("UPDATE `" + table + "` SET player = '" + player.getName()
-						+ "' WHERE player_uuid = '" + player.getUniqueId().toString() + "';");
-				statement.close();
-			}
+    private Connection c;
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    public SQLEconomyListener(String table, String defMoney, Connection c) {
+        this.table = table;
+        this.defMoney = defMoney;
+        this.c = c;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerLogin(PlayerLoginEvent event) {
+        Player player = event.getPlayer();
+
+        try {
+            if (!SQLEconomyActions.playerDataContainsPlayer(player.getUniqueId())) {
+                PreparedStatement econRegister = c.prepareStatement(
+                        "INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
+                econRegister.setString(1, player.getName());
+                econRegister.setString(2, player.getUniqueId().toString());
+                econRegister.setString(3, defMoney);
+                econRegister.setLong(4, 1);
+                econRegister.executeUpdate();
+                econRegister.close();
+
+                System.out.println("[SQLEconomy] Added user " + player.getName() + " to the economy database.");
+            } else {
+                // make sure the stored player name is kept current
+
+                Statement statement = c.createStatement();
+                statement.executeUpdate("UPDATE `" + table + "` SET player = '" + player.getName()
+                        + "' WHERE player_uuid = '" + player.getUniqueId().toString() + "';");
+                statement.close();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

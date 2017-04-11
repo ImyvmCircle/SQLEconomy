@@ -26,62 +26,62 @@ import java.util.TimerTask;
 
 public class SQLEconomy extends JavaPlugin implements Listener {
 
-	private Plugin plugin;
-	
-	public static SQLEconomy S;
+    private Plugin plugin;
 
-	// Making variables for SQL connection static, escaping errors
-	private static String host;
-	private static String port;
-	private static String database;
-	private static String table;
-	private static String user;
-	private static String pass;
-	private static String defMoney;
+    public static SQLEconomy S;
+
+    // Making variables for SQL connection static, escaping errors
+    private static String host;
+    private static String port;
+    private static String database;
+    private static String table;
+    private static String user;
+    private static String pass;
+    private static String defMoney;
     public static boolean caching;
     private int cacheRate;
     private static Cache cache;
     private static Timer updateCache;
 
-	public static String moneyUnit;
-	
-	public static double taxRate;
+    public static String moneyUnit;
 
-	private static MySQL MySQL;
-	static Connection c;
+    public static double taxRate;
 
-	public void onDisable() {
-	}
+    private static MySQL MySQL;
+    static Connection c;
 
-	public void onEnable() {
+    public void onDisable() {
+    }
+
+    public void onEnable() {
         FileConfiguration conf = getConfig("config.yml");
         FileConfiguration dbConf = getConfig("db.yml");
 
-		host = dbConf.getString("HostIP");
-		port = dbConf.getString("Port");
-		database = dbConf.getString("Name");
-		table = dbConf.getString("Table");
-		user = dbConf.getString("Username");
-		pass = dbConf.getString("Password");
+        host = dbConf.getString("HostIP");
+        port = dbConf.getString("Port");
+        database = dbConf.getString("Name");
+        table = dbConf.getString("Table");
+        user = dbConf.getString("Username");
+        pass = dbConf.getString("Password");
         caching = dbConf.getBoolean("Caching");
         cacheRate = dbConf.getInt("CacheRate");
 
-		defMoney = conf.getString("DefaultMoney");
-		moneyUnit = conf.getString("MoneyUnit");
-		taxRate = conf.getInt("TaxRate")/100.0;
+        defMoney = conf.getString("DefaultMoney");
+        moneyUnit = conf.getString("MoneyUnit");
+        taxRate = conf.getInt("TaxRate")/100.0;
 
-		MySQL = new MySQL(host, port, database, user, pass);
-		try {
-			c = MySQL.openConnection();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+        MySQL = new MySQL(host, port, database, user, pass);
+        try {
+            c = MySQL.openConnection();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            getLogger().info("Found an exception connecting to the database. Make sure you've set your db.yml file up.");
+        }
 
-		SQLEconomyActions.createTable();
+        SQLEconomyActions.createTable();
 
-		if(caching) {
+        if(caching) {
             cache = new Cache(c, table);
             cache.createCache();
             updateCache = new Timer();
@@ -93,38 +93,38 @@ public class SQLEconomy extends JavaPlugin implements Listener {
             }, cacheRate, cacheRate);
         }
 
-		this.getCommand("money").setExecutor(new Money(this));
-		this.getCommand("m").setExecutor(new Money(this));
-		this.getCommand("sqle-config").setExecutor(new Config(this, getConfig()));
-		Bukkit.getServer().getPluginManager().registerEvents(new SQLEconomyListener(table, defMoney, c), this);
-		
-		registerEconomy();
-	}
-	
-	public static String getTable() {
-		return table;
-	}
-	
-	public static String getDefaultMoney() {
-		return defMoney;
-	}
-	
-	public static SQLEconomyAPI getAPI() {
-		return new SQLEconomyAPI();
-	}
+        this.getCommand("money").setExecutor(new Money(this));
+        this.getCommand("m").setExecutor(new Money(this));
+        this.getCommand("sqle-config").setExecutor(new Config(this, getConfig()));
+        Bukkit.getServer().getPluginManager().registerEvents(new SQLEconomyListener(table, defMoney, c), this);
 
-	public static Cache getCache() {
-	    return cache;
-	}
-	
-	// Vault hook based on implementation found at https://github.com/MinecraftWars/Gringotts
-	private void registerEconomy() {
+        registerEconomy();
+    }
+
+    public static String getTable() {
+        return table;
+    }
+
+    public static String getDefaultMoney() {
+        return defMoney;
+    }
+
+    public static SQLEconomyAPI getAPI() {
+        return new SQLEconomyAPI();
+    }
+
+    public static Cache getCache() {
+        return cache;
+    }
+
+    // Vault hook based on implementation found at https://github.com/MinecraftWars/Gringotts
+    private void registerEconomy() {
         if (Dependency.DEP.vault.exists()) {
             final ServicesManager sm = getServer().getServicesManager();
             sm.register(Economy.class, new VaultConnector(), this, ServicePriority.Highest);
             getLogger().info("Registered Vault interface.");
         } else {
-        	getLogger().info("[SQLEconomy] Vault not found. Other plugins may not be able to access SQLEconomy accounts.");
+            getLogger().info("[SQLEconomy] Vault not found. Other plugins may not be able to access SQLEconomy accounts.");
         }
     }
 
@@ -132,28 +132,28 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         return YamlConfiguration.loadConfiguration(Configuration.loadResource(this, name));
     }
 
-	public boolean isInteger(String str) {
-		if (str == null) {
-			return false;
-		}
-		int length = str.length();
-		if (length == 0) {
-			return false;
-		}
-		int i = 0;
-		if (str.charAt(0) == '-') {
-			if (length == 1) {
-				return false;
-			}
-			i = 1;
-		}
-		for (; i < length; i++) {
-			char c = str.charAt(i);
-			if (c < '0' || c > '9') {
-				return false;
-			}
-		}
-		return true;
-	}
+    public boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        int length = str.length();
+        if (length == 0) {
+            return false;
+        }
+        int i = 0;
+        if (str.charAt(0) == '-') {
+            if (length == 1) {
+                return false;
+            }
+            i = 1;
+        }
+        for (; i < length; i++) {
+            char c = str.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
