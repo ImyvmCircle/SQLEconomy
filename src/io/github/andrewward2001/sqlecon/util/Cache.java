@@ -36,25 +36,37 @@ public class Cache {
     }
 
     public boolean updateCache() {
-        for(Account a: stored) {
-            try {
-                PreparedStatement updateCache = c.prepareStatement("UPDATE `" + table + "` SET `player` = ?, `player_uuid` = ?, `money` = ? WHERE `player_uuid` = ?;");
-                updateCache.setString(1, a.name);
-                updateCache.setString(2, a.uid.toString());
-                updateCache.setInt(3, a.bal);
-                updateCache.setString(4, a.uid.toString());
+        long start = System.currentTimeMillis();
+        int updated = 0;
 
-                updateCache.executeUpdate();
-                updateCache.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
+        try {
+            PreparedStatement getCurrentM = c.prepareStatement("SELECT `money` FROM `" + table + "` WHERE `player_uuid` = ?;");
+            PreparedStatement updateCache = c.prepareStatement("UPDATE `" + table + "` SET `player` = ?, `player_uuid` = ?, `money` = ? WHERE `player_uuid` = ?;");
+
+            for(int i = 0; i < stored.size(); i++) {
+                getCurrentM.setString(1, stored.get(i).uid.toString());
+                ResultSet getCurrentMRes = getCurrentM.executeQuery();
+                while (getCurrentMRes.next()) {
+                    Account a = stored.get(i);
+                    if(a.bal != getCurrentMRes.getInt("money")) {
+                        updateCache.setString(1, a.name);
+                        updateCache.setString(2, a.uid.toString());
+                        updateCache.setInt(3, a.bal);
+                        updateCache.setString(4, a.uid.toString());
+                        updateCache.execute();
+                        updated++;
+                    }
+                }
             }
+            getCurrentM.close();
+            updateCache.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        stored.clear();
-        createCache();
 
-        System.out.println("[SQLEconomy] Updated database from cache.");
+        long end = System.currentTimeMillis();
+        System.out.println("[SQLEconomy] Updated " + updated + " database rows from cache in " + (end-start) + " ms.");
 
         return true;
     }
