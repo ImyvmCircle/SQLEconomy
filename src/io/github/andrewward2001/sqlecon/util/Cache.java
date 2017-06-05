@@ -40,30 +40,22 @@ public class Cache {
         int updated = 0;
 
         try {
-            PreparedStatement getCurrentM = c.prepareStatement("SELECT `money` FROM `" + table + "` WHERE `player_uuid` = ?;");
             PreparedStatement updateCache = c.prepareStatement("UPDATE `" + table + "` SET `player` = ?, `player_uuid` = ?, `money` = ? WHERE `player_uuid` = ?;");
+            for(Account a: stored) {
+                updateCache.setString(1, a.name);
+                updateCache.setString(2, a.uid.toString());
+                updateCache.setInt(3, a.bal);
+                updateCache.setString(4, a.uid.toString());
 
-            for(int i = 0; i < stored.size(); i++) {
-                getCurrentM.setString(1, stored.get(i).uid.toString());
-                ResultSet getCurrentMRes = getCurrentM.executeQuery();
-                while (getCurrentMRes.next()) {
-                    Account a = stored.get(i);
-                    if(a.bal != getCurrentMRes.getInt("money")) {
-                        updateCache.setString(1, a.name);
-                        updateCache.setString(2, a.uid.toString());
-                        updateCache.setInt(3, a.bal);
-                        updateCache.setString(4, a.uid.toString());
-                        updateCache.execute();
-                        updated++;
-                    }
-                }
+                updateCache.executeUpdate();
+                updateCache.close();
             }
-            getCurrentM.close();
-            updateCache.close();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+
+
 
         long end = System.currentTimeMillis();
         System.out.println("[SQLEconomy] Updated " + updated + " database rows from cache in " + (end-start) + " ms.");
