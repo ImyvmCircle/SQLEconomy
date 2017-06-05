@@ -42,16 +42,17 @@ public class Cache {
         try {
             PreparedStatement updateCache = c.prepareStatement("UPDATE `" + table + "` SET `player` = ?, `player_uuid` = ?, `money` = ? WHERE `player_uuid` = ?;");
             for(Account a: stored) {
+                updateCache.clearParameters();
                 updateCache.setString(1, a.name);
                 updateCache.setString(2, a.uid.toString());
                 updateCache.setInt(3, a.bal);
                 updateCache.setString(4, a.uid.toString());
 
                 updateCache.executeUpdate();
-                updateCache.close();
+
             }
+            updateCache.close();
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
 
