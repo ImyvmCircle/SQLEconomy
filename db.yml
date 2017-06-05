@@ -25,5 +25,5 @@ CacheRate: 60000
 # Many hosted MySQL servers use SSL to verify that the server is trusted. If you have problems connecting, try enabling this.
 UseSSL: false
 # Trusts the server's SSL certificate even if it doesn't come from a trusted source
-# Won't do anything if UseSSL is set to false, but tends to break things when set true.
+# Won't do anything if UseSSL is set to false
 TrustSSL: false

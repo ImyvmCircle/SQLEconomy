@@ -76,10 +76,12 @@ public class MySQL extends Database {
             connectionURL = connectionURL + "/" + this.database;
         }
         if (ssl == true) {
-            connectionURL += "?useSSL=true";
+            connectionURL += "?";
 
             if(trustSSL == true)
-                connectionURL += "&verifyServerCertificate=false";
+                connectionURL += "verifyServerCertificate=false&";
+
+            connectionURL += "useSSL=true";
         }
 
         Class.forName("com.mysql.jdbc.Driver");
