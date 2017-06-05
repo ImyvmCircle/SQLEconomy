@@ -37,6 +37,8 @@ public class SQLEconomy extends JavaPlugin implements Listener {
     private static String table;
     private static String user;
     private static String pass;
+    private static boolean useSSL;
+    private static boolean trustSSL;
     private static String defMoney;
     public static boolean caching;
     private int cacheRate;
@@ -63,6 +65,8 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         table = dbConf.getString("Table");
         user = dbConf.getString("Username");
         pass = dbConf.getString("Password");
+        useSSL = dbConf.getBoolean("UseSSL");
+        trustSSL = dbConf.getBoolean("TrustSSL");
         caching = dbConf.getBoolean("Caching");
         cacheRate = dbConf.getInt("CacheRate");
 
@@ -70,7 +74,7 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         moneyUnit = conf.getString("MoneyUnit");
         taxRate = conf.getInt("TaxRate")/100.0;
 
-        MySQL = new MySQL(host, port, database, user, pass);
+        MySQL = new MySQL(host, port, database, user, pass, useSSL, trustSSL);
         try {
             c = MySQL.openConnection();
         } catch (ClassNotFoundException e) {

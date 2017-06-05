@@ -18,6 +18,8 @@ public class MySQL extends Database {
     private final String password;
     private final String port;
     private final String hostname;
+    private final boolean ssl;
+    private final boolean trustSSL;
 
     /**
      * Creates a new MySQL instance
@@ -32,8 +34,8 @@ public class MySQL extends Database {
      *            Password
      */
     public MySQL(String hostname, String port, String username,
-            String password) {
-        this(hostname, port, null, username, password);
+            String password, boolean ssl, boolean trustSSL) {
+        this(hostname, port, null, username, password, ssl, trustSSL);
     }
 
     /**
@@ -51,12 +53,14 @@ public class MySQL extends Database {
      *            Password
      */
     public MySQL(String hostname, String port, String database,
-            String username, String password) {
+            String username, String password, boolean ssl, boolean trustSSL) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;
         this.user = username;
         this.password = password;
+        this.ssl = ssl;
+        this.trustSSL = trustSSL;
     }
 
     @Override
@@ -70,6 +74,12 @@ public class MySQL extends Database {
                 + this.hostname + ":" + this.port;
         if (database != null) {
             connectionURL = connectionURL + "/" + this.database;
+        }
+        if (ssl == true) {
+            connectionURL += "?useSSL=true";
+
+            if(trustSSL == true)
+                connectionURL += "&verifyServerCertificate=false";
         }
 
         Class.forName("com.mysql.jdbc.Driver");
