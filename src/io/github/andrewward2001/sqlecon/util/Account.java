@@ -6,9 +6,9 @@ public class Account {
 
     public String name;
     public UUID uid;
-    public int bal;
+    public double bal;
 
-    public Account(String name, UUID uid, int bal) {
+    public Account(String name, UUID uid, double bal) {
         this.name = name;
         this.uid = uid;
         this.bal = bal;

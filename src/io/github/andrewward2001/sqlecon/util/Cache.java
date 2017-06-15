@@ -25,7 +25,7 @@ public class Cache {
             ResultSet res = getMoney
                     .executeQuery("SELECT * FROM `" + table + "`;");
             while(res.next()) {
-                stored.add(new Account(res.getString("player"), UUID.fromString(res.getString("player_uuid")), res.getInt("money")));
+                stored.add(new Account(res.getString("player"), UUID.fromString(res.getString("player_uuid")), res.getDouble("money")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -45,7 +45,7 @@ public class Cache {
                 updateCache.clearParameters();
                 updateCache.setString(1, a.name);
                 updateCache.setString(2, a.uid.toString());
-                updateCache.setInt(3, a.bal);
+                updateCache.setDouble(3, a.bal);
                 updateCache.setString(4, a.uid.toString());
 
                 updateCache.executeUpdate();
