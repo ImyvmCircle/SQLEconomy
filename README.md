@@ -6,8 +6,8 @@ SQLEconomy is a bukkit plugin that combines MySQL and SQLite and puts them into 
 ## Installation
 Grab the latest release, then head over to [dev.bukkit.org](https://dev.bukkit.org/projects/sqleconomee) for the instructions.
 
-###We did changes for adapting imyvm server better
-###To Do List
+### We did changes for adapting imyvm server better
+### To Do List
 * fix some bug,like some vault hooks invalid etal.
 * change money type to double
 * hide meaasage outputed on console
