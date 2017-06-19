@@ -14,8 +14,6 @@ import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.andrewward2001.sqlecon.hooks.VaultConnector;
-import io.github.andrewward2001.sqlecon.cmd.Config;
-import io.github.andrewward2001.sqlecon.cmd.Money;
 import io.github.andrewward2001.sqlecon.hooks.Dependency;
 import io.github.andrewward2001.sqlecon.mysql.*;
 import net.milkbowl.vault.economy.Economy;
@@ -97,9 +95,14 @@ public class SQLEconomy extends JavaPlugin implements Listener {
             }, cacheRate, cacheRate);
         }
 
-        this.getCommand("money").setExecutor(new Money(this));
+        /**
+         * @date 2017年6月18日 23点02分
+         * @author Holeyness
+         * @description 删除指令响应
+         */
+        /*this.getCommand("money").setExecutor(new Money(this));
         this.getCommand("m").setExecutor(new Money(this));
-        this.getCommand("sqle-config").setExecutor(new Config(this, getConfig()));
+        this.getCommand("sqle-config").setExecutor(new Config(this, getConfig()));*/
         Bukkit.getServer().getPluginManager().registerEvents(new SQLEconomyListener(table, defMoney, c), this);
 
         registerEconomy();

@@ -2,39 +2,4 @@ name: SQLEconomy
 main: io.github.andrewward2001.sqlecon.SQLEconomy
 version: 0.5-BETA
 description: An SQL economy plugin
-commands:
-  money:
-    description: Displays the sender's money
-    permission: sqleconomy.money
-  m:
-    description: Alias for /money
-    permission: sqleconomy.money
-  sqle-config:
-    description: Sets configuration values for SQLEconomy
-    permission: sqleconomy.config
-permissions:
-  sqleconomy.money:
-    description: Give access /money command
-    default: true
-  sqleconomy.money.transfer:
-    description: Gives access to /money transfer
-    default: true
-  sqleconomy.money.*:
-    description: Gives access to all SQLEconomy /money commands
-    children:
-      sqleconomy.money.give: true
-      sqleconomy.money.remove: true
-      sqleconomy.money.seeothers: true
-  sqleconomy.money.give:
-    description: Give other players money independent from yours
-    default: op
-  sqleconomy.money.remove:
-    description: Take money from other players
-    default: op
-  sqleconomy.money.seeothers:
-    description: See how much money someone else has
-    default: op
-  sqleconomy.config:
-    description: Configure SQLEconomy
-    default: op
-  
+depend: [Vault]
