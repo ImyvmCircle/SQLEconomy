@@ -1,9 +1,13 @@
 package io.github.andrewward2001.sqlecon;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import io.github.andrewward2001.sqlecon.util.Cache;
-import io.github.andrewward2001.sqlecon.util.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,14 +17,12 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.github.andrewward2001.sqlecon.hooks.VaultConnector;
 import io.github.andrewward2001.sqlecon.hooks.Dependency;
-import io.github.andrewward2001.sqlecon.mysql.*;
+import io.github.andrewward2001.sqlecon.hooks.VaultConnector;
+import io.github.andrewward2001.sqlecon.mysql.MySQL;
+import io.github.andrewward2001.sqlecon.util.Cache;
+import io.github.andrewward2001.sqlecon.util.Configuration;
 import net.milkbowl.vault.economy.Economy;
-
-import java.util.Timer;
-import java.sql.Connection;
-import java.util.TimerTask;
 
 public class SQLEconomy extends JavaPlugin implements Listener {
 
@@ -82,6 +84,30 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         }
 
         SQLEconomyActions.createTable();
+        /**
+         * @author Holeyness
+         * @description 防数据库连接丢失，每天查询一次数据库
+         */
+        Timer timer = new Timer();
+        //每6小时查询一次数据库时间
+        timer.schedule(new TimerTask() {
+                public void run() {
+                    if(c != null){
+                    	String sql = "select sysDate();";
+                    	try {
+                    		Statement statement = c.createStatement();
+							ResultSet resultSet = statement.executeQuery(sql);
+							if(resultSet.next()){
+								System.out.println(resultSet.getDate("sysDate()"));
+							}
+							
+							statement.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+                    }
+                }
+        }, 2000, 1000*3600*6);
 
         if(caching) {
             cache = new Cache(c, table);
