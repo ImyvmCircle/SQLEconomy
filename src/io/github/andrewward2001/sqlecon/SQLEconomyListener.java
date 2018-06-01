@@ -11,6 +11,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import com.earth2me.essentials.api.Economy;
+
 public class SQLEconomyListener implements Listener {
 
     private String table;
@@ -32,6 +34,13 @@ public class SQLEconomyListener implements Listener {
             if (!SQLEconomyActions.playerDataContainsPlayer(player.getUniqueId())) {
                 PreparedStatement econRegister = c.prepareStatement(
                         "INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
+                if (Economy.playerExists(player.getName())){
+                    try{
+                        defMoney = Economy.getMoneyExact(player.getName()).toString();
+                    } catch (Exception e){
+                        //Exception handling
+                    }
+                }
                 econRegister.setString(1, player.getName());
                 econRegister.setString(2, player.getUniqueId().toString());
                 econRegister.setString(3, defMoney);
