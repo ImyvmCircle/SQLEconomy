@@ -11,6 +11,8 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 
+import static com.sun.javafx.binding.Logging.getLogger;
+
 public class VaultConnector implements Economy {
 
 	private final String name = "SQLEconomy";
@@ -83,12 +85,13 @@ public class VaultConnector implements Economy {
 
 	/**
 	 * @param arg0
-	 *            Íæ¼ÒÃû
+	 *            ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * @param arg1
-	 *            Ö´ÐÐÍê×ªÕËºóµÄÓà¶î
+	 *            Ö´ï¿½ï¿½ï¿½ï¿½×ªï¿½Ëºï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	@Override
 	public EconomyResponse depositPlayer(String arg0, double arg1) {
+//		System.out.println("bbb0:" + arg1);
 		boolean deposit = api.give(arg0, arg1);
 
 		if (deposit) {
@@ -231,6 +234,8 @@ public class VaultConnector implements Economy {
 
 	@Override
 	public EconomyResponse withdrawPlayer(String arg0, double arg1) {
+//		System.out.println("aaa0:" + arg1 + " arg0:" + arg0);
+
 		boolean withdraw = api.withdraw(arg0, arg1);
 
 		if (withdraw) {
@@ -242,6 +247,7 @@ public class VaultConnector implements Economy {
 
 	@Override
 	public EconomyResponse withdrawPlayer(OfflinePlayer arg0, double arg1) {
+//		System.out.println("aaa1:" + arg1);
 		boolean withdraw = api.withdraw(arg0.getUniqueId(), arg1);
 
 		if (withdraw) {

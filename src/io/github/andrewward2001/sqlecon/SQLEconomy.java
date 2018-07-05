@@ -48,6 +48,7 @@ public class SQLEconomy extends JavaPlugin implements Listener {
     public static String moneyUnit;
 
     public static double taxRate;
+    public static String servername;
 
     private static MySQL MySQL;
     static Connection c;
@@ -73,6 +74,7 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         defMoney = conf.getString("DefaultMoney");
         moneyUnit = conf.getString("MoneyUnit");
         taxRate = conf.getInt("TaxRate")/100.0;
+        servername = conf.getString("server name");
 
         MySQL = new MySQL(host, port, database, user, pass, useSSL, trustSSL);
         try {
@@ -142,6 +144,10 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         return defMoney;
     }
 
+    public static String getServername(){
+        return servername;
+    }
+
     public static SQLEconomyAPI getAPI() {
         return new SQLEconomyAPI();
     }
@@ -160,6 +166,8 @@ public class SQLEconomy extends JavaPlugin implements Listener {
             getLogger().info("[SQLEconomy] Vault not found. Other plugins may not be able to access SQLEconomy accounts.");
         }
     }
+
+
 
     public FileConfiguration getConfig(String name) {
         return YamlConfiguration.loadConfiguration(Configuration.loadResource(this, name));

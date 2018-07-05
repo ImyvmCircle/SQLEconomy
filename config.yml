@@ -10,3 +10,5 @@ DefaultMoney: 1000
 MoneyUnit: dollars
 # Tax rate (percentage)
 TaxRate: 0
+# Server name
+servername: skyblock
