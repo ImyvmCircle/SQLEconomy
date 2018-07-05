@@ -2,4 +2,4 @@ name: SQLEconomy
 main: io.github.andrewward2001.sqlecon.SQLEconomy
 version: 0.5-BETA
 description: An SQL economy plugin
-depend: [Vault]
+depend: [Vault, Essentials]
