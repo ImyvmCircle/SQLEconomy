@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import net.ess3.api.events.UserBalanceUpdateEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,6 +20,7 @@ public class SQLEconomyListener implements Listener {
 
     private String table;
     private String defMoney;
+    private static String servername = SQLEconomy.getServername();
 
     private Connection c;
 
@@ -34,10 +38,10 @@ public class SQLEconomyListener implements Listener {
             if (!SQLEconomyActions.playerDataContainsPlayer(player.getUniqueId())) {
                 PreparedStatement econRegister = c.prepareStatement(
                         "INSERT INTO `" + table + "` (player, player_uuid, money, active) VALUES (?, ?, ?, ?);");
-                if (Economy.playerExists(player.getName())){
-                    try{
+                if (Economy.playerExists(player.getName())) {
+                    try {
                         defMoney = Economy.getMoneyExact(player.getName()).toString();
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         //Exception handling
                     }
                 }
@@ -60,6 +64,26 @@ public class SQLEconomyListener implements Listener {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void UserBalUpdate(UserBalanceUpdateEvent event) {
+        try {
+            Date dt = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            PreparedStatement logInfo = c.prepareStatement("INSERT INTO `eventlog` (uuid, newevent," +
+                    "oldevent,eventtime,playername,servercode) VALUES (?, ?, ?, ?, ?, ?);");
+            logInfo.setString(1, event.getPlayer().getUniqueId().toString());
+            logInfo.setString(2, event.getNewBalance().toString());
+            logInfo.setString(3, event.getOldBalance().toString());
+            logInfo.setString(4, df.format(dt));
+            logInfo.setString(5, event.getPlayer().getName());
+            logInfo.setString(6, servername);
+            logInfo.executeUpdate();
+            logInfo.close();
+        } catch (SQLException e) {
+            System.out.println("Error creating moneylog!");
         }
     }
 

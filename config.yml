@@ -11,4 +11,6 @@ MoneyUnit: dollars
 # Tax rate (percentage)
 TaxRate: 0
 # Server name
-servername: skyblock
+servername: Test
+# EventTable
+table: eventlog
