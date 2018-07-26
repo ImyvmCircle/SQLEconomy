@@ -11,15 +11,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/OneDrive/Download/spigot-api-1.13-pre7-R0.1-SNAPSHOT-shaded-b1680.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$USER_HOME$/OneDrive/Download/EssentialsX-2.15.0.16.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -39,6 +30,15 @@
       <library>
         <CLASSES>
           <root url="jar://$USER_HOME$/OneDrive/文档/imyvm/plugins/Vault.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/OneDrive/文档/imyvm/plugins/spigot-api-1.12.2-R0.1-SNAPSHOT-shaded-b1420.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

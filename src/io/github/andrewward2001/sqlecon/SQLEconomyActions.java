@@ -5,8 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
@@ -18,6 +22,7 @@ public class SQLEconomyActions {
 
 	private static Connection c = SQLEconomy.c;
 	private static String table = SQLEconomy.getTable();
+	private static String servername = SQLEconomy.getServername();
 
 	private static double taxRate = S.taxRate;
 	private static String logtable = SQLEconomy.getLogtable();
@@ -131,13 +136,24 @@ public class SQLEconomyActions {
 				}
 			} else {
 				try {
+
+					String oldmoney = String.valueOf(getMoney(uid));
+					String name = Bukkit.getOfflinePlayer(uid).getName();
+
 					PreparedStatement giveMoney = c.prepareStatement("UPDATE `" + table + "` SET money = money + ? WHERE player_uuid=?;");
 					giveMoney.setDouble(1, amount);
 					giveMoney.setString(2, uid.toString());
 					giveMoney.executeUpdate();
 					giveMoney.close();
 
-					return true;
+					String newmoney = String.valueOf(getMoney(uid));
+					if (moneyLog(oldmoney, newmoney, uid.toString(), name, "give")) {
+						return true;
+					} else {
+						System.out.println("[SQLEconomy] Error: write log false, player:" + name +
+								"om:" + oldmoney + "nm:" + newmoney);
+					}
+
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -161,13 +177,22 @@ public class SQLEconomyActions {
 				}
 			} else
 				try {
+
+					String oldmoney = String.valueOf(getMoney(name));
+
 					PreparedStatement giveMoney = c.prepareStatement("UPDATE `" + table + "` SET money = money + ? WHERE player = ?;");
 					giveMoney.setDouble(1, amount);
 					giveMoney.setString(2, name);
 					giveMoney.executeUpdate();
 					giveMoney.close();
 
-					return true;
+					String newmoney = String.valueOf(getMoney(name));
+					if (moneyLog(oldmoney, newmoney, getUUID(name), name, "give")) {
+						return true;
+					} else {
+						System.out.println("[SQLEconomy] Error: write log false, player:" + name +
+								"om:" + oldmoney + "nm:" + newmoney);
+					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -194,6 +219,10 @@ public class SQLEconomyActions {
 				}
 			} else
 				try {
+
+					String oldmoney = String.valueOf(getMoney(uid));
+					String name = Bukkit.getOfflinePlayer(uid).getName();
+
 					PreparedStatement removeMoney = c.prepareStatement("UPDATE `" + table + "` SET money = money - ? WHERE player_uuid=?;");
 					removeMoney.setDouble(1, amount);
 					removeMoney.setString(2, uid.toString());
@@ -201,7 +230,13 @@ public class SQLEconomyActions {
 
 					removeMoney.close();
 
-					return true;
+					String newmoney = String.valueOf(getMoney(uid));
+					if (moneyLog(oldmoney, newmoney, uid.toString(), name, "remove")) {
+						return true;
+					} else {
+						System.out.println("[SQLEconomy] Error: write log false, player:" + name +
+								"om:" + oldmoney + "nm:" + newmoney);
+					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -228,16 +263,59 @@ public class SQLEconomyActions {
 				}
 			} else
 				try {
+
+					String oldmoney = String.valueOf(getMoney(name));
+
 					PreparedStatement getBal = c.prepareStatement("UPDATE `" + table + "` SET money = money - ? WHERE player=?;");
 					getBal.setDouble(1, amount);
 					getBal.setString(2, name);
 					getBal.executeUpdate();
 					getBal.close();
 
-					return true;
+					String newmoney = String.valueOf(getMoney(name));
+					if (moneyLog(oldmoney, newmoney, getUUID(name), name, "remove")) {
+						return true;
+					} else {
+						System.out.println("[SQLEconomy] Error: write log false, player:" + name +
+								"om:" + oldmoney + "nm:" + newmoney);
+					}
+
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+		}
+
+		return false;
+	}
+
+	private static boolean moneyLog(String oldinfo, String newinfo, String uid, String name, String type) {
+		try {
+			Date dt = new Date();
+			SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+			if(Objects.equals(type, "remove")) {
+				PreparedStatement logInfo = c.prepareStatement("INSERT INTO `eventlog` (uuid, newevent,oldevent,eventtime,playername,servercode) VALUES (?, ?, ?, ?, ?, ?);");
+				logInfo.setString(1, uid);
+				logInfo.setString(2, newinfo);
+				logInfo.setString(3, oldinfo);
+				logInfo.setString(4, df.format(dt));
+				logInfo.setString(5, name);
+				logInfo.setString(6, servername);
+				logInfo.executeUpdate();
+				logInfo.close();
+			}else {
+				PreparedStatement logInfo = c.prepareStatement("UPDATE `eventlog` SET newevent=? WHERE uuid=? and eventtime=? and servercode=? and playername=?;");
+				logInfo.setString(1, newinfo);
+				logInfo.setString(2, uid);
+				logInfo.setString(3, df.format(dt));
+				logInfo.setString(4, servername);
+				logInfo.setString(5, name);
+				logInfo.executeUpdate();
+				logInfo.close();
+			}
+			return true;
+		} catch (SQLException e) {
+			System.out.println("[ItemMail] Error creating user!");
 		}
 
 		return false;
@@ -314,6 +392,33 @@ public class SQLEconomyActions {
 		}
 
 		return 0.0;
+	}
+
+	/**
+	 * 查询UUID接口
+	 *
+	 * @param name 玩家名
+	 * @return
+	 */
+	private static String getUUID(String name) {
+		try {
+			PreparedStatement getuid = c.prepareStatement("SELECT player_uuid FROM `" + table + "` WHERE player = ?;");
+			getuid.setString(1, name);
+			ResultSet res = getuid.executeQuery();
+			while (res.next()) {
+				String uid = res.getString("player_uuid");
+				getuid.close();
+				res.close();
+
+				return uid;
+			}
+
+			return "";
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return "";
 	}
 
 	public static boolean createAccount(OfflinePlayer player) {
