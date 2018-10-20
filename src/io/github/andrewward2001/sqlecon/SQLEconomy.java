@@ -1,7 +1,6 @@
 package io.github.andrewward2001.sqlecon;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -91,10 +90,9 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         SQLEconomyActions.createlogTable();
         /**
          * @author Holeyness
-         * @description 防数据库连接丢失，每天查询一次数据库
+         * @description Timer
          */
         Timer timer = new Timer();
-        //每6小时查询一次数据库时间
         timer.schedule(new TimerTask() {
                 public void run() {
                     if(c != null){
@@ -127,9 +125,9 @@ public class SQLEconomy extends JavaPlugin implements Listener {
         }
 
         /**
-         * @date 2017年6月18日 23点02分
+         * @date 2017锟斤拷6锟斤拷18锟斤拷 23锟斤拷02锟斤拷
          * @author Holeyness
-         * @description 删除指令响应
+         * @description 删锟斤拷指锟斤拷锟斤拷应
          */
         /*this.getCommand("money").setExecutor(new Money(this));
         this.getCommand("m").setExecutor(new Money(this));

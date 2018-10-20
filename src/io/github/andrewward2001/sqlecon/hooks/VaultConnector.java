@@ -36,7 +36,7 @@ public class VaultConnector implements Economy {
 		return new EconomyResponse(0, 0, ResponseType.NOT_IMPLEMENTED, "SQLEconomy does not support bank accounts!");
 	}
 
-	@Override
+	@Deprecated
 	public EconomyResponse createBank(String arg0, String arg1) {
 		return new EconomyResponse(0, 0, ResponseType.NOT_IMPLEMENTED, "SQLEconomy does not support bank accounts!");
 	}
@@ -46,7 +46,7 @@ public class VaultConnector implements Economy {
 		return new EconomyResponse(0, 0, ResponseType.NOT_IMPLEMENTED, "SQLEconomy does not support bank accounts!");
 	}
 
-	@Override
+	@Deprecated
 	public boolean createPlayerAccount(String arg0) {
 		return api.createAccount(arg0);
 	}
@@ -56,7 +56,7 @@ public class VaultConnector implements Economy {
 		return api.createAccount(arg0);
 	}
 
-	@Override
+	@Deprecated
 	public boolean createPlayerAccount(String arg0, String arg1) {
 		return api.createAccount(arg0);
 	}
@@ -87,7 +87,7 @@ public class VaultConnector implements Economy {
 	 * @param arg1
 	 *            执行完转账后的余额
 	 */
-	@Override
+	@Deprecated
 	public EconomyResponse depositPlayer(String arg0, double arg1) {
 		boolean deposit = api.give(arg0, arg1);
 
@@ -109,7 +109,7 @@ public class VaultConnector implements Economy {
 		return new EconomyResponse(0, getBalance(arg0), ResponseType.FAILURE, "Error with deposit (is it a positive number?)");
 	}
 
-	@Override
+	@Deprecated
 	public EconomyResponse depositPlayer(String arg0, String arg1, double arg2) {
 		return depositPlayer(arg0, arg2);
 	}
@@ -129,7 +129,7 @@ public class VaultConnector implements Economy {
 		return 0;
 	}
 
-	@Override
+	@Deprecated
 	public double getBalance(String arg0) {
 		return api.getBalance(arg0);
 	}
@@ -139,7 +139,7 @@ public class VaultConnector implements Economy {
 		return api.getBalance(arg0.getUniqueId());
 	}
 
-	@Override
+	@Deprecated
 	public double getBalance(String arg0, String arg1) {
 		return api.getBalance(arg0);
 	}
@@ -159,7 +159,7 @@ public class VaultConnector implements Economy {
 		return name;
 	}
 
-	@Override
+	@Deprecated
 	public boolean has(String arg0, double arg1) {
 		return api.hasEnough(arg0, arg1);
 	}
@@ -169,7 +169,7 @@ public class VaultConnector implements Economy {
 		return api.hasEnough(arg0.getUniqueId(), arg1);
 	}
 
-	@Override
+	@Deprecated
 	public boolean has(String arg0, String arg1, double arg2) {
 		return api.hasEnough(arg0, arg2);
 	}
@@ -179,7 +179,7 @@ public class VaultConnector implements Economy {
 		return api.hasEnough(arg0.getUniqueId(), arg2);
 	}
 
-	@Override
+	@Deprecated
 	public boolean hasAccount(String arg0) {
 		return api.accountExists(arg0);
 	}
@@ -189,7 +189,7 @@ public class VaultConnector implements Economy {
 		return api.accountExists(arg0.getUniqueId());
 	}
 
-	@Override
+	@Deprecated
 	public boolean hasAccount(String arg0, String arg1) {
 		return api.accountExists(arg0);
 	}
@@ -204,7 +204,7 @@ public class VaultConnector implements Economy {
 		return false;
 	}
 
-	@Override
+	@Deprecated
 	public EconomyResponse isBankMember(String arg0, String arg1) {
 		return new EconomyResponse(0, 0, ResponseType.NOT_IMPLEMENTED, "SQLEconomy does not support bank accounts!");
 	}
@@ -214,7 +214,7 @@ public class VaultConnector implements Economy {
 		return new EconomyResponse(0, 0, ResponseType.NOT_IMPLEMENTED, "SQLEconomy does not support bank accounts!");
 	}
 
-	@Override
+	@Deprecated
 	public EconomyResponse isBankOwner(String arg0, String arg1) {
 		return new EconomyResponse(0, 0, ResponseType.NOT_IMPLEMENTED, "SQLEconomy does not support bank accounts!");
 	}
@@ -229,7 +229,7 @@ public class VaultConnector implements Economy {
 		return SQLEconomy.S != null && SQLEconomy.S.isEnabled();
 	}
 
-	@Override
+	@Deprecated
 	public EconomyResponse withdrawPlayer(String arg0, double arg1) {
 		boolean withdraw = api.withdraw(arg0, arg1);
 
@@ -251,7 +251,7 @@ public class VaultConnector implements Economy {
 		return new EconomyResponse(0, getBalance(arg0), ResponseType.FAILURE, "Not enough money.");
 	}
 
-	@Override
+	@Deprecated
 	public EconomyResponse withdrawPlayer(String arg0, String arg1, double arg2) {
 		return withdrawPlayer(arg0, arg2);
 	}
