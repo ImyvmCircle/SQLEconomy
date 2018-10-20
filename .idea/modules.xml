@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SQLEconomy.iml" filepath="$PROJECT_DIR$/SQLEconomy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SQLEconomy.iml" filepath="$PROJECT_DIR$/.idea/SQLEconomy.iml" />
     </modules>
   </component>
 </project>

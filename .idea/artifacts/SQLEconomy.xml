@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SQLEconomy">
+    <output-path>$PROJECT_DIR$/out/artifacts/SQLEconomy</output-path>
+    <root id="archive" name="SQLEconomy.jar">
+      <element id="module-output" name="SQLEconomy" />
+    </root>
+  </artifact>
+</component>
