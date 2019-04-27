@@ -3,4 +3,4 @@ main: io.github.andrewward2001.sqlecon.SQLEconomy
 version: 0.5-BETA
 description: An SQL economy plugin
 depend: [Vault]
-api-version: 1.13
+api-version: 1.14
